@@ -9,16 +9,21 @@ import Select from 'react-select'
 import 'react-datepicker/dist/react-datepicker.css'
 
 import AuthService from "../services/auth.service";
-
+import userService from "../services/user.service";
 
 //options for marital status 
 const designationOptions=[
-  {value :"Scholar", label:"Scholar"},
-  {value :"Professor", label:"Professor"},
-  {value :"HOD", label:"HOD"},
-  {value :"AssistantProfessor", label:"Assistant Professor"},
-  {value :"NonTeachingStaff", label:"Non-Teaching Staff"}
+  //ROle-USER
+  {value :"M.Tech. Scholar", label:"M.Tech. Scholar"},
+  {value :"Ph.D. Scholar", label:"Ph.D. Scholar"},
+  {value :"Non Teaching Staff", label:"Non-Teaching Staff"},
+  //ROLE- MOD
+  {value :"Faculty Advisor", label:"Faculty Advisor"},
+  {value :"Program Coordinator", label:"Program Coordinator"},
+  {value :"Professor", label:"Professor"}
 ];
+
+const professorsList=[];
 
 const required = value => {
   if (!value) {
@@ -116,7 +121,8 @@ export default class Register extends Component {
 	    casualLeave:0,
       earnedLeave:0,
       successful: false,
-      message: ""
+      message: "",
+      guide:"",
     };
   }
 
@@ -129,12 +135,32 @@ export default class Register extends Component {
   onChangeMobileNo(e) { this.setState({ mobileNo: e.target.value});}
   //handleDesignationChange(e) { this.setState({ designation: e.target.value});}
 
+  
+
 
   handleDesignationChange=(op)=>{
+    userService.getProfessors().then(res => {
+      professorsList.length=0;
+      for(let i=0;i<res.data.length;i++){
+        professorsList.push({
+          value:res.data[i],
+          label:res.data[i]
+        })
+      }
+     });
+
+     op.value==="Ph.D. Scholar" ? 
+     this.setState({designation: op}) :
+     this.setState({
+       designation: op,
+       guide:professorsList
+      }) 
+   // console.log("set designation",this.state.designation)
+  }
+  handleGuideChange=(op)=>{
     this.setState({
-        designation: op
+        guide: op
     })
-   // console.log("maritalstatus",this.state.designation)
   }
 
   handleDateChange=(date)=>{
@@ -161,7 +187,8 @@ export default class Register extends Component {
       joinDate:joiningDate,
       email:this.state.email,
       mobileNo:this.state.mobileNo,
-      designation:this.state.designation.value
+      designation:this.state.designation.value,
+      guide:this.state.guide.value
      }
      console.log("User",user);
     if (this.checkBtn.context._errors.length === 0) {
@@ -190,6 +217,7 @@ export default class Register extends Component {
   }
 
   render() {
+    console.log("desi",this.state.designation);
     return (
       <div className="col-md-12">
         <div className="card container col-md-6">
@@ -304,7 +332,21 @@ export default class Register extends Component {
                                   onChange={this.handleDesignationChange}
                                   options={designationOptions} 
                         />
-                  </div>
+                </div>
+
+                {
+                this.state.designation.value == "Ph.D. Scholar" ? 
+                <div className="form-group">
+                     <label class="input-white">Guide </label>
+                        <Select  name="guide"  
+                                 value={this.state.guide}
+                                 onChange={this.handleGuideChange}
+                                 options={professorsList}
+                        />
+                </div> :
+                <div></div>
+                }
+              
 
                 <div className="form-group">
                   <button className="btn btn-primary btn-block">Sign Up</button>

@@ -54,7 +54,7 @@ class App extends Component {
   render() {
     const { currentUser, Role } = this.state;
     return (
-      <div style={{backgroundImage: `url(${backgroundImage})`, height:'auto'}}>
+      <div style={{backgroundImage: `url(${backgroundImage})`, height:'auto',color:'white'}}>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
           <Link to={"/"} className="navbar-brand">
             LMS
@@ -77,7 +77,7 @@ class App extends Component {
               </li>
             )}
             
-            {(Role === "ADMIN" || Role === "MOD" ) && (
+            {(Role === "ADMIN") && (
               <li className="nav-item">
                 <Link to={"/employees"} className="nav-link">
                  All Employees 
@@ -153,7 +153,7 @@ class App extends Component {
             {/* <Route path="/mod" component={BoardModerator} /> */}
             <Route path="/requests" component={ViewAllRequest} />
             <Route path="/my-requests" component={MyRequests} />
-            <Route path="/view-application/:id" component={ViewEmployeeById} />
+            <Route path="/view-emplyee/:id" component={ViewEmployeeById} />
             <Route path="/view-request/:id" component={ViewRequestByEmployeeById} />
           </Switch>
         </div>

@@ -38,7 +38,8 @@ class MyRequests extends Component {
         const currentUser = authService.getCurrentUser();
         console.log(requestId)
         let currRequest=this.state.requests.filter(res => res.id ==requestId)
-        currRequest[0].status="Cancelled";
+        currRequest[0].finalStatus="Cancelled";
+        currRequest[0].currentStatus="Withdrawn By User";
         console.log(currRequest);
         userService.cancelLeave(currentUser.id,currRequest[0],requestId).then( res => {
              this.setState({requests:res.data});
@@ -49,9 +50,9 @@ class MyRequests extends Component {
             return <Redirect to={this.state.redirect} />
           }
         return (
-            <div>
-                 <div children="row">
-                    <table className="table table-striped table-bordered">
+            <div style={{color:'white'}}>
+                 <div children="row"  style={{color:'white'}}>
+                    <table className="table table-striped table-bordered"  style={{color:'white'}}>
                         <thead>
                             <tr>
                                 <th>Request ID</th>
@@ -59,7 +60,8 @@ class MyRequests extends Component {
                                 <th>Leave Type</th>
                                 <th>From </th>
                                 <th>To </th>
-                                <th>Status</th>
+                                <th>Final Status</th>
+                                <th>Current Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -74,15 +76,16 @@ class MyRequests extends Component {
                                             <td>{req.endDate}</td>
                                              {  
                                                   
-                                                 req.status == "Approved" ? 
+                                                 req.finalStatus == "Approved" ? 
                                                  <td style={{color:'#40D428'}}> Approved</td> :
-                                                 (req.status == "Declined" ?
+                                                 (req.finalStatus == "Declined" ?
                                                  <td style={{color:'#FF0000'}}> Declined</td> :
 
-                                                 [req.status=="Pending" ?<td style={{color:'#FFA500'}}> Pending</td> :
+                                                 [req.finalStatus=="Pending" ?<td style={{color:'#FFA500'}}> Pending</td> :
                                                  <td style={{color:'#7E7E7E'}}> Cancelled</td>])
                                              }
-                                            <button disabled={req.status !=="Pending"} style={{marginLeft: "5px",marginTop: "5px"}} 
+                                             <td style={{color:'#FFA500'}}>{req.currentStatus}</td>
+                                            <button disabled={req.finalStatus !=="Pending"} style={{marginLeft: "5px",marginTop: "5px"}} 
                                             onClick={ () => this.handleCancelLeave(req.id)} className="btn btn-info"> Withdraw </button>
                                         </tr>
                                 )

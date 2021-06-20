@@ -24,6 +24,7 @@ public class SignupRequest {
 	private String joinDate;
 	private long mobileNo;
 	private String designation;
+	private String guide;
 	
 	
 	
@@ -98,4 +99,14 @@ public class SignupRequest {
     public void setRole(Set<String> role) {
       this.role = role;
     }
+
+	public String getGuide() {
+		return guide;
+	}
+
+	public void setGuide(String guide) {
+		this.guide = guide;
+	}
+    
+    
 }

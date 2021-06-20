@@ -91,7 +91,7 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-  
+        System.out.println("designation"+userDetails.getDesignation());
 		return ResponseEntity.ok(new JwtResponse(jwt, 
 												 userDetails.getId(), 
 												 userDetails.getUsername(), 
@@ -100,7 +100,8 @@ public class AuthController {
 												 userDetails.getMobileNo(),
 												 userDetails.getEmail(), 
 												 userDetails.getJoinDate(),
-										
+												 userDetails.getDesignation(),
+												 //userDetails.getGuide(),
 												 roles));
 	}
 
@@ -116,16 +117,44 @@ public class AuthController {
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
-        User hod =userRepository.findByDesignation("HOD");
-		if (hod !=null && signUpRequest.getDesignation().equals("HOD")) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: HOD already exists !"));
+					.body(new MessageResponse("Error: Email is already in use!"));
 		}
+		String desi=signUpRequest.getDesignation();
+		if (desi.equals("Faculty Advisor") && userRepository.findFA(desi)!=null) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: FA already exists !"));
+		}
+		if (desi.equals("Program Coordinator") && userRepository.findPC(desi)!=null) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Program Coordinator already exists !"));
+		}
+        
 		// Create new user's account
+		
 		User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()),
 				signUpRequest.getFirstName(), signUpRequest.getLastName(),signUpRequest.getJoinDate(),signUpRequest.getEmail(),
 				signUpRequest.getMobileNo(),signUpRequest.getDesignation());
+		System.out.println(user.toString());
+		if(signUpRequest.getDesignation().equals("Ph.D. Scholar")) {
+			   // String[] name
+			    System.out.println("Guide:"+signUpRequest.getGuide());
+			    User professor=this.userRepository.findByName(signUpRequest.getGuide());
+			    System.out.println("Guide EMPID "+professor.getEmpId());
+				user.setReports_to(professor.getEmpId());
+		}else if(signUpRequest.getDesignation().equals("M.Tech Scholar")) {
+			User FA=userRepository.findFA("Faculty Advisor");
+			if(FA==null){
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("Error: FA does not exist !"));
+			}
+			user.setReports_to(FA.getEmpId());
+	   }
 
 		//Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();
@@ -137,11 +166,11 @@ public class AuthController {
 //			roles.add(userRole);
 //		} else {
 //			strRoles.forEach(role -> {
-		if(designation.equals("HOD")) {
+		if(designation.equals("Professor") || designation.equals("Program Coordinator") || designation.equals("Faculty Advisor") ) {
 					Role modRole = roleRepository.findByName(ERole.ROLE_MOD)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(modRole);
-		}else {	
+		}else{	
 			    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 			    		.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(userRole);

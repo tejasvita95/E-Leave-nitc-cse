@@ -22,7 +22,7 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface RequestRepository extends JpaRepository<Request,Integer> {
 	
-	@Query(value="select * from Requests a where a.emp_id =:id and status ='Pending' ", nativeQuery=true)
+	@Query(value="select * from Requests a where a.emp_id =:id and a.final_status='Pending'", nativeQuery=true)
 	public Request checkPendingRequest(int id);
 	
 	@Query(value="select role_id from Requests a where a.emp_id = :Id ", nativeQuery=true)
@@ -30,9 +30,23 @@ public interface RequestRepository extends JpaRepository<Request,Integer> {
 	
 	
 	public List<Request> findAll();
-	public List<Request> findByStatusNotOrderByIdDesc(String status);
 	
-	@Query(value="select * from Requests a where a.designation <> 'HOD' AND a.status <> 'Cancelled' Order By request_date desc ", nativeQuery=true)
+	@Query(value="select * from Requests a where a.designation IN :designations AND a.final_status <> 'Cancelled' OR a.current_status='Approved By Program Coordinator' Order By request_date desc ", nativeQuery=true)
+	public List<Request> findByDesignationInByOrderByIdDesc(List<String> designations);
+	
+	@Query(value="select * from Requests a where  (a.designation = 'Ph.D. Scholar' AND a.current_status = 'Approved By Guide') OR (a.designation = 'M.Tech. Scholar' AND a.current_status = 'Approved By FA') Order By request_date desc ", nativeQuery=true)
+	public List<Request> findByDesignationApprovedByFirstPerson();
+	
+
+	@Query(value="select * from Requests a where a.designation = 'M.Tech. Scholar' AND a.current_status = 'Waiting for Approval' AND a.final_status <> 'Cancelled' Order By request_date desc ", nativeQuery=true)
+	public List<Request> findByMtechScholarOrderByIdDesc();
+	
+	
+	@Query(value="SELECT * FROM requests r INNER JOIN users u ON r.emp_id = u.emp_id  where  r.designation = 'Ph.D. Scholar' AND u.reports_to =:callerId ", nativeQuery=true)
+	//@Query(value="select * from Requests r", nativeQuery=true)
+	public List<Request> findByPhdScholarOrderByIdDesc(int callerId);
+	
+	@Query(value="select * from Requests a where a.designation <> 'HOD' AND a.final_status <> 'Cancelled' Order By request_date desc ", nativeQuery=true)
 	public List<Request> findByDesignationNotByOrderByIdDesc(String designation);
 	
 	@Query(value="select * from Requests a where a.emp_id =:id AND a.designation <> 'HOD' Order By request_date desc ", nativeQuery=true)

@@ -18,9 +18,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	Optional<User> findByUsername(String username);
 //	select * from users where designation != "administrator";
     
-	@Query(value = "select * from USERS c where c.designation <> 'administrator' AND c.is_enabled = TRUE ", nativeQuery = true)
+	@Query(value = "select * from USERS c where c.designation <> 'HOD' AND c.is_enabled = TRUE ", nativeQuery = true)
 	public List<User> findByDesignationNot();
 	
+	@Query(value = "select * from USERS c where (c.designation == 'M.Tech. Scholar' OR c.designation == 'P.hD. Scholar') AND c.is_enabled = TRUE ", nativeQuery = true)
+	public List<User> findByDesignations();
+
+	@Query(value = "select * from USERS c where c.designation == 'P.hD. Scholar' AND c.reportsTo =:callerEmpId AND c.is_enabled = TRUE ", nativeQuery = true)
+	public List<User> findByRepotingPerson(int callerEmpId);
 	
 	@Query(value = "select * from USERS c where c.designation NOT IN :designation AND is_enabled = TRUE ", nativeQuery = true)
 	public List<User> findByDesignationNotIn(List<String> designation);
@@ -30,8 +35,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 //	 @Query(value="SELECT u FROM USERS u WHERE u.email =:email",nativeQuery = true)
 	 public User findByEmail(String email); 
 	 
-	 public User findByResetPasswordToken(String token);
-	
+
 	public Boolean existsByUsername(String username);
 	
 	@Query(value = "SELECT account_status FROM USERS u WHERE u.username =:username", nativeQuery = true)
@@ -42,11 +46,24 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	public Boolean existsByEmail(String email);
 	
-	public User findByDesignation(String designation);
+	public List<User> findByDesignation(String designation);
+	
+	@Query(value = "SELECT * FROM users u WHERE u.designation ='Faculty Advisor'", nativeQuery = true)
+	public User findFA(String designation);
+	
+	@Query(value = "SELECT * FROM users u WHERE u.designation ='Program Coordinator'", nativeQuery = true)
+	public User findPC(String designation);
+	
 	@Query(value = "SELECT role_id FROM USER_ROLES u WHERE u.emp_id =:id", nativeQuery = true)
 	Integer isAdmin(int id);
 	
 	public List<User> findAll();
+	
+	@Query(value = "SELECT CONCAT_WS(' ', `first_name`, `last_name`) FROM users u WHERE u.designation ='Professor' AND u.account_status = TRUE", nativeQuery = true)
+	public List<String> findProfessors();
+	
+	@Query(value = "SELECT * FROM USERS u WHERE CONCAT_WS(' ', `first_name`, `last_name`) like %:name%", nativeQuery = true)
+	public User findByName(String name);
 	
 	@Modifying
 	@Query(value = "UPDATE Users u set account_status = true where u.emp_id = :empId",nativeQuery = true)

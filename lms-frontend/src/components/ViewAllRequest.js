@@ -24,50 +24,55 @@ class ViewAllRequest extends Component {
     componentDidMount(){
         const currentUser = authService.getCurrentUser();
         console.log("current user ID",currentUser.id);
-        let Role="";
-        if(currentUser){
-            if(currentUser.roles.includes("ROLE_ADMIN")){
-                Role="ADMIN";
-            }else if(currentUser.roles.includes("ROLE_MOD")){
-                Role="MOD";
-            }else{
-                Role="USER";
-            } 
-        }
-        console.log("ROLE",Role)
+        console.log("current user role",currentUser.roles);
+        console.log("current user designation",currentUser.designation);
         if (!currentUser) 
               this.setState({ 
                   redirect: "/login",
                 }); 
-        else if(currentUser && Role === "USER"){
+        else if(currentUser && currentUser.roles.includes("ROLE_USER")){
             this.setState({ 
                 redirect: "/profile",
               }); 
         }
         else{
-            userService.getAllRequest(Role).then((res) => {
+            // console.log("currentUser",currentUser.id);
+            // console.log("currentUser Clas",currentUser.className);
+            userService.getAllRequest(currentUser.id,currentUser.designation).then((res) => {
                 this.setState({
-                    Role:Role,
                     requests: res.data
                 });
             });
         } 
     }
     approveRequestHandler(requestId){
+           const currentUser = authService.getCurrentUser();
            console.log(requestId)
-           let currRequest=this.state.requests.filter(res => res.id ==requestId)
-           currRequest[0].status="Approved";
+           let currRequest=this.state.requests.filter(res => res.id == requestId)
+           if(currentUser.designation ==="Professor"){
+               currRequest[0].currentStatus="Approved By Guide";
+           }else if(currentUser.designation ==="Faculty Advisor"){
+            currRequest[0].currentStatus="Approved By FA";
+           }else if(currentUser.designation ==="Program Coordinator"){
+            currRequest[0].currentStatus="Approved By Program Coordinator";
+           }else if(currentUser.designation ==="HOD"){
+             currRequest[0].currentStatus="Approved"
+             currRequest[0].finalStatus="Approved"
+           }
+           
            console.log(currRequest);
-           userService.changeRequestStatus(currRequest[0],requestId,this.state.Role).then( res => {
+           userService.changeRequestStatus(requestId,currentUser.id,currRequest[0],currentUser.designation).then( res => {
                 this.setState({requests:res.data});
             });
     }
     declineRequestHandler(requestId){
+        const currentUser = authService.getCurrentUser();
         console.log(requestId)
         let currRequest=this.state.requests.filter(res => res.id ==requestId)
-        currRequest[0].status="Declined";
+        currRequest[0].finalStatus="Declined";
+        currRequest[0].currentStatus="Declined";
         console.log(currRequest);
-        userService.changeRequestStatus(currRequest[0],requestId,this.state.Role).then( res => {
+        userService.changeRequestStatus(requestId,currentUser.id,currRequest[0],currentUser.designation).then( res => {
              this.setState({requests:res.data});
          });
      }
@@ -77,9 +82,9 @@ class ViewAllRequest extends Component {
             return <Redirect to={this.state.redirect}/>
           }
         return (
-            <div>
+            <div >
                  <div children="row">
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered"style={{color:'white'}}>
                         <thead>
                             <tr>
                                 <th>Request ID</th>
@@ -89,7 +94,7 @@ class ViewAllRequest extends Component {
                                 <th>Leave Type</th>
                                 <th>From </th>
                                 <th>To </th>
-                                <th>Status</th>
+                                <th>Final Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -98,22 +103,22 @@ class ViewAllRequest extends Component {
                                 this.state.requests.map(req =>
                                         <tr key={req.id}>
                                             <td>{req.id}</td>
-                                            <td><a href="" onClick={()=> this.viewRequestByEmplyoeeId(req.empId)}>{req.empId}</a></td>
+                                            <td><a href="" onClick={()=> this.viewRequestByEmplyoeeId(req.empId)} style={{color:'black'}}>{req.empId}</a></td>
                                             <td>{req.designation}</td>
                                             <td>{req.requestDate}</td>
                                             <td>{req.leaveType}</td>
                                             <td>{req.startDate}</td>
                                             <td>{req.endDate}</td>
-                                             {req.status == "Approved" ? 
+                                             {req.finalStatus == "Approved" ? 
                                                  <td style={{color:'#40D428'}}> Approved</td> :
-                                                 (req.status == "Declined" ?
+                                                 (req.finalStatus == "Declined" ?
                                                  <td style={{color:'#FF0000'}}> Declined</td> :
                                                  <td style={{color:'#FFA500'}}> Pending</td>)
                                              }
                                             <td>
-                                              <button disabled={req.status=="Approved" || req.status=="Declined"} style={{marginLeft: "5px",marginTop: "5px"}} 
+                                              <button disabled={req.finalStatus=="Approved" || req.finalStatus=="Declined"} style={{marginLeft: "5px",marginTop: "5px"}} 
                                                   onClick={ () => this.approveRequestHandler(req.id)} className="btn btn-info"> Approve </button>
-                                              <button disabled={req.status=="Declined" || req.status=="Approved"} style={{marginLeft: "5px",marginTop: "5px"}}
+                                              <button disabled={req.finalStatus=="Declined" || req.finalStatus=="Approved"} style={{marginLeft: "5px",marginTop: "5px"}}
                                                   onClick={ () => this.declineRequestHandler(req.id)} className="btn btn-danger"> Decline </button>
                                              </td>
                                         </tr>

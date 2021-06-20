@@ -28,10 +28,8 @@ public class User {
 	private double casualLeave;
 	private double earnedLeave;
 	private boolean accountStatus;
+	private int reports_to;
 	private boolean isEnabled;
-	
-	@Column(name = "reset_password_token")
-	private String resetPasswordToken;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(	name = "user_roles", 
@@ -58,11 +56,18 @@ public class User {
 		this.sickLeave = 14;
 		this.casualLeave = 7;
 		this.earnedLeave = 0;
-		this.accountStatus = false;
-		
+	}
+	
+	public int getReports_to() {
+		return reports_to;
 	}
 
-	
+
+	public void setReports_to(int reports_to) {
+		this.reports_to = reports_to;
+	}
+
+
 	public String getUsername() {
 		return username;
 	}
@@ -170,9 +175,8 @@ public class User {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-
-
-	public Boolean getAccountStatus() {
+        
+	public boolean getAccountStatus() {
 		return accountStatus;
 	}
 
@@ -181,17 +185,7 @@ public class User {
 		this.accountStatus = accountStatus;
 	}
 
-    
-	public String getResetPasswordToken() {
-		return resetPasswordToken;
-	}
 
-
-	public void setResetPasswordToken(String resetPasswordToken) {
-		this.resetPasswordToken = resetPasswordToken;
-	}
-
-    
 	public boolean isEnabled() {
 		return isEnabled;
 	}
@@ -200,8 +194,7 @@ public class User {
 	public void setEnabled(boolean isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-
-
+   
 	@Override
 	public String toString() {
 		return "User [empId=" + empId + ", username=" + username + ", password=" + password + ", firstName=" + firstName

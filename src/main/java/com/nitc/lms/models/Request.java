@@ -31,11 +31,13 @@ public class Request {
 	private String requestDate;
 	private String startDate;
 	private String endDate;
-	private String status;
+	private String finalStatus;
+	private String currentStatus;
 	
 	
 	public Request() {
-		this.status = "Pending";
+		this.finalStatus = "Pending";
+		this.currentStatus="Waiting for Approval";
 	}
 	public Request(int empId,String designation, String leaveType, String requestDate, String startDate, String endDate) {
 		super();
@@ -45,7 +47,8 @@ public class Request {
 		this.requestDate = requestDate;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.status = "Pending";
+		this.finalStatus = "Pending";
+		this.currentStatus="Waiting for Approval";
 	}
     
 	public int getId() {
@@ -101,19 +104,27 @@ public class Request {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
-
-	public String getStatus() {
-		return status;
+	public String getFinalStatus() {
+		return finalStatus;
 	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public void setFinalStatus(String final_status) {
+		this.finalStatus = final_status;
+	}
+	public String getCurrentStatus() {
+		return currentStatus;
+	}
+	public void setCurrentStatus(String current_status) {
+		this.currentStatus = current_status;
 	}
 	@Override
 	public String toString() {
-		return "Request [id=" + id + ", empId=" + empId + ", leaveType=" + leaveType + ", requestDate=" + requestDate
-				+ ", startDate=" + startDate + ", endDate=" + endDate + ", status=" + status + "]";
+		return "Request [id=" + id + ", empId=" + empId + ", designation=" + designation + ", leaveType=" + leaveType
+				+ ", requestDate=" + requestDate + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", finalStatus=" + finalStatus + ", currentStatus=" + currentStatus + "]";
 	}
+
+	
+	
 
 	
 	

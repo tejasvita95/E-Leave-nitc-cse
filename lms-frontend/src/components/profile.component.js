@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import AuthService from "../services/auth.service";
-
+import userService from '../services/user.service';
 export default class Profile extends Component {
   constructor(props) {
     super(props);
@@ -9,18 +9,26 @@ export default class Profile extends Component {
     this.state = {
       redirect: null,
       userReady: false,
-      currentUser: { }
+      currentUser: { },
+      User:{}
     };
   }
 
   componentDidMount() {
     const currentUser = AuthService.getCurrentUser();
 
-    if (!currentUser) this.setState({ redirect: "/login" });
-    this.setState({ currentUser: currentUser, userReady: true })
+    if (!currentUser) 
+          this.setState({ redirect: "/login" });
+    userService.getBalance(currentUser.id).then( res => {
+      this.setState({User:res.data,
+        currentUser: currentUser,
+         userReady: true
+      });
+      })
   }
 
   render() {
+    console.log("sick",this.state.User.sickLeave)
     if (this.state.redirect) {
       return <Redirect to={this.state.redirect} />
     }
@@ -31,7 +39,7 @@ export default class Profile extends Component {
       <div className="container">
         {(this.state.userReady) ?
         <div>
-         <header className="jumbotron">
+         <header className="jumbotron" style={{color:'black'}}>
            <h3>Profile</h3>
            <h4>
              <strong>Hi {currentUser.username} !</strong> 
@@ -42,31 +50,39 @@ export default class Profile extends Component {
           {currentUser.accessToken.toString()}
           {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
         </p> */}
-        <p>
-          <strong>Employee Id:</strong>{" "}
-           {currentUser.id}
-        </p>
-        <p>
-          <strong>Name: </strong>{" "}
-          {currentUser.firstName + " "+ currentUser.lastName}
-        </p>
-        <p>
-          <strong>Email:</strong>{" "}
-          {currentUser.email}
-        </p>
-        <p>
-          <strong>Contact:</strong>{" "}
-          {currentUser.mobileNo}
-        </p>
-        <p>
-          <strong>Join Date:</strong>{" "}
-          {currentUser.joinDate}
-        </p>
-        <strong>Authorities:</strong>
-        <p>
-          {currentUser.roles &&
-            currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-        </p>
+        <table>
+          <tr>
+            <th style={{paddingLeft:"30px" }}>Employee Id:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.id}</td>
+            <th style={{paddingLeft:"30px" }}>Designation:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.designation}</td>
+          </tr>
+          
+          <tr>
+            <th style={{paddingLeft:"30px" }}>Name:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.firstName + " "+ currentUser.lastName}</td>
+            <th style={{paddingLeft:"30px" }}>Email:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.email}</td>
+          </tr>
+          <tr>
+            <th style={{paddingLeft:"30px" }}>Contact:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.mobileNo}</td>
+            <th style={{paddingLeft:"30px" }}>Join Date:</th>
+            <td style={{paddingLeft:"15px" }}>{currentUser.joinDate}</td>
+          </tr>
+          {/* <tr>
+            <th style={{paddingLeft:"30px" }}>Authorities:</th>
+               <td style={{paddingLeft:"15px" }}>
+                {currentUser.roles &&
+                currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
+               </td>
+          </tr> */}
+        </table>
+        
+        <br></br>
+        <br></br> 
+        <br></br>
+        <br></br>
       </div>: null}
       </div>
     );

@@ -16,11 +16,15 @@ class UserService {
   getAllEmployee(Role){
     return axios.get(API_URL + 'employees?role='+Role,{ headers: authHeader() })
   }
+  getProfessors(){
+    return axios.get(API_URL + 'professors')
+  }
   getEmployeeById(empId){
     return axios.get(API_URL + 'admin/employees/'+empId, { headers: authHeader() })
   }
-  getAllRequest(role){
-    return axios.get(API_URL + 'requests?role='+role, { headers: authHeader() })
+  getAllRequest(callerId,designation){
+   
+    return axios.get(API_URL + 'leave-requests/'+callerId+'?role='+designation, { headers: authHeader() })
   }
 
   getAllRequestByEmplyoeeId(id,role){
@@ -37,9 +41,12 @@ class UserService {
   applyLeave(leaveRequest){
     return axios.post(API_URL+ 'user/add-leave',leaveRequest);
   }
-
-  changeRequestStatus(request,requestId,role){
-    return axios.put(API_URL + 'requests/' + requestId+'?role='+role, request, {headers: authHeader() });
+  
+  getBalance(id){
+    return axios.get(API_URL + 'balance/'+id, { headers: authHeader() })
+  }
+  changeRequestStatus(requestId,callerId,request,designation){
+    return axios.put(API_URL + 'requests/' + requestId+ '/'+callerId +'?role='+ designation, request, {headers: authHeader() });
   }
   
   cancelLeave(empId,request,requestId){

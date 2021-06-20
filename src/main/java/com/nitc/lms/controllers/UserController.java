@@ -35,19 +35,31 @@ public class UserController {
 	@Autowired
 	private ConfirmationTokenRepository confirmationTokenRepository;
 	
+
+	
     //	get all employees handler
 	@GetMapping("/employees")
 //	@PreAuthorize("hasRole('MOD') or hasRole('ADMIN')")
-	public List<User> getAllEmployee(@RequestParam("role") String UserRole){
-		
-		if(UserRole.equals("ADMIN")) {
-			return this.userRepository.findByDesignationNot();
-		}
-		List<String> designation = new ArrayList<>();
-		designation.add("administrator");
-		designation.add("hod");
-		return this.userRepository.findByDesignationNotIn(designation);
+	public List<User> getAllEmployee(){
+		return this.userRepository.findByDesignationNot();
 	}
+	
+	@GetMapping("/professors")
+	public List<String> getProfessors(){
+		return this.userRepository.findProfessors();
+	}
+	
+   @GetMapping("/scholars")
+   public List<User> getAllScholar(@RequestParam("role") String designation, int callerEmpId){	
+		if(designation.equals("HOD") || designation.equals("Program Coordinator")) {
+			return this.userRepository.findByDesignations();
+		}else if(designation.equals("Faculty Advisor")) {
+			return this.userRepository.findByDesignation("M.Tech. Scholar");
+		}else if(designation.equals("Professor")) {
+			return this.userRepository.findByRepotingPerson(callerEmpId);
+		}
+		return null;
+   }
 				
 //	get employees by Id handler
 	@GetMapping("/admin/employees/{id}")//admin/employees
@@ -55,37 +67,32 @@ public class UserController {
 	public User getEmployee(@PathVariable("id") int empId) {
 		return this.userRepository.findById(empId);
 	}
+	
+	@GetMapping("/balance/{id}")
+	public User getBalance(@PathVariable("id") int empId) {
+		return this.userRepository.findById(empId);
+	}
+	
+	
 
 	//activate user's account
 	@Transactional
 	@PutMapping("/employees/{empId}")
-	public List<User> activateAccount(@PathVariable("empId") int empId, @RequestParam("role") String UserRole) {
+	public List<User> activateAccount(@PathVariable("empId") int empId) {
 			this.userRepository.activation(empId);
-			if(UserRole.equals("ADMIN")) {
-				return this.userRepository.findByDesignationNot();
-			}
-			List<String> designation = new ArrayList<>();
-			designation.add("administrator");
-			designation.add("hod");
-			return this.userRepository.findByDesignationNotIn(designation);
-		}
+			return this.userRepository.findByDesignationNot();
+	}
 	
     
-	  // delete employee rest api
-	  @DeleteMapping("/employees/{id}")
-	  public List<User> deleteEmployee(@PathVariable int id, @RequestParam("role") String UserRole){
-	  User user = userRepository.findById(id);
+	   // delete employee rest api
+	   @DeleteMapping("/employees/{id}")
+	   public List<User> deleteEmployee(@PathVariable int id){
+	         User user = userRepository.findById(id);
 					//.orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id :" + id));
 			ConfirmationToken ct=this.confirmationTokenRepository.findByEmpId(id);
 			this.confirmationTokenRepository.delete(ct);
 			this.userRepository.delete(user);
+			return this.userRepository.findByDesignationNot();
 			
-			if(UserRole.equals("ADMIN")) {
-				return this.userRepository.findByDesignationNot();
-			}
-			List<String> designation = new ArrayList<>();
-			designation.add("administrator");
-			designation.add("hod");
-			return this.userRepository.findByDesignationNotIn(designation);
-		}
+	   }
 }

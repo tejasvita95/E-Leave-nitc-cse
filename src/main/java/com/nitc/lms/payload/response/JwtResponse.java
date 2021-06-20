@@ -12,10 +12,11 @@ public class JwtResponse {
 	private long mobileNo;
 	private String email;
 	private String joinDate;
+	private String designation;
 	private List<String> roles;
 
 	public JwtResponse(String accessToken, int id, String username,String firstName,String lastName,
-			           long mobileNo, String email, String joinDate, List<String> roles) {
+			           long mobileNo, String email, String joinDate, String designation,List<String> roles) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
@@ -24,6 +25,7 @@ public class JwtResponse {
 		this.mobileNo = mobileNo;
 		this.email = email;
 		this.joinDate=joinDate;
+		this.designation=designation;
 		this.roles = roles;
 	}
 
@@ -102,4 +104,14 @@ public class JwtResponse {
 	public List<String> getRoles() {
 		return roles;
 	}
+
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+	
+	
 }

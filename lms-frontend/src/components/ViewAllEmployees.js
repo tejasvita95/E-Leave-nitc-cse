@@ -135,9 +135,9 @@ class ViewAllEmployees extends Component {
             return <Redirect to={this.state.redirect} />
           }
         return (
-            <div>
+            <div style={{color:'white'}}>
                  <div children="row">
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered" style={{color:'white'}}>
                         <thead>
                             <tr>
                                 <th>Employee ID</th>
