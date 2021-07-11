@@ -6,6 +6,9 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select'
 import { Redirect } from "react-router-dom";
 import Collapsible from 'react-collapsible';
+import UploadFiles from "./upload-files.component";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 
 import 'react-datepicker/dist/react-datepicker.css'
 import userService from "../services/user.service";
@@ -222,6 +225,10 @@ export default class ApplyLeave extends Component {
                     onChange={this.handleEndDateChange}
                   />
                 </div>
+                <div className="container" style={{ width: "600px" }}>
+                  <UploadFiles />
+                </div>
+
 
 
                 {/* <div className="container">

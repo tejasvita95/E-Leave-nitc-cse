@@ -42,6 +42,15 @@ export default class Profile extends Component {
 
     return (
       <div className="container">
+  {/* <div className="container" style={{ width: "600px" }}>
+      <div style={{ margin: "20px" }}>
+        <h3>bezkoder.com</h3>
+        <h4>React upload Files</h4>
+      </div>
+
+      <UploadFiles />
+    </div> */}
+
         {(this.state.userReady) ?
           <div>
             <div style={{ width: 250, height: 100, float: 'left', margin: '40px' }}>
