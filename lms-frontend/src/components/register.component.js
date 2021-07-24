@@ -21,7 +21,7 @@ const designationOptions=[
   {value :"Faculty Advisor", label:"Faculty Advisor"},
   {value :"M.Tech. Program Coordinator", label:"M.Tech. Program Coordinator"},
   {value :"Ph.D. Program Coordinator", label:"Ph.D. Program Coordinator"},
-  {value :"Professor", label:"Professor"}
+  {value :"Professor", label:"Faculty"}
 ];
 
 const professorsList=[];
@@ -265,7 +265,7 @@ export default class Register extends Component {
     });
     return isValid;
   }
- 
+
 
   render() {
     console.log("desi",this.state.designation);

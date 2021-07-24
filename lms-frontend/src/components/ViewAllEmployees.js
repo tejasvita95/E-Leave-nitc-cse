@@ -186,7 +186,7 @@ class ViewAllEmployees extends Component {
                                                     <tr key={emp.empId}>
                                                         <td > <u><a style={{ color: "#3FF" }} href="" onClick={() => this.viewApplication(emp.empId)}>{emp.username}</a></u></td>
                                                         <td>{emp.firstName} {emp.lastName}</td>
-                                                        <td>{emp.designation}</td>
+                                                        <td>{emp.designation=="Professor"?"Faculty":emp.designation}</td>
                                                         {emp.accountStatus == true ?
                                                             <td style={{ color: '#40D428' }}> Active</td> :
                                                             <td style={{ color: '#FF0000' }}> Not Active</td>
@@ -237,7 +237,7 @@ class ViewAllEmployees extends Component {
                                                     <tr key={emp.empId}>
                                                         <td > <u><a style={{ color: "#3FF" }} href="" onClick={() => this.viewApplication(emp.empId)}>{emp.username}</a></u></td>
                                                         <td>{emp.firstName} {emp.lastName}</td>
-                                                        <td>{emp.designation}</td>
+                                                        <td>{emp.designation=="Professor"?"Faculty":emp.designation}</td>
                                                         {emp.accountStatus == true ?
                                                             <td style={{ color: '#40D428' }}> Active</td> :
                                                             <td style={{ color: '#FF0000' }}> Not Active</td>

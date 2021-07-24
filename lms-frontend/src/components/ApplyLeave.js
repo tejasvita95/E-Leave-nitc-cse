@@ -6,9 +6,6 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select'
 import { Redirect } from "react-router-dom";
 import Collapsible from 'react-collapsible';
-import UploadFiles from "./upload-files.component";
-import "bootstrap/dist/css/bootstrap.min.css";
-
 
 import 'react-datepicker/dist/react-datepicker.css'
 import userService from "../services/user.service";
@@ -17,13 +14,13 @@ import authService from "../services/auth.service";
 const leaveOptions = [
   { value: "Casual Leave", label: "Casual Leave" },
   { value: "Earned Leave", label: "Earned Leave" },
-  // { value: "Sick Leave", label: "Sick Leave" }
+  { value: "Sick Leave", label: "Sick Leave" }
 ];
 
 
 const leaveOptions2 = [
   { value: "Casual Leave", label: "Casual Leave" },
-  // { value: "Sick Leave", label: "Sick Leave" }
+  { value: "Sick Leave", label: "Sick Leave" }
 ];
 
 export default class ApplyLeave extends Component {
@@ -42,11 +39,13 @@ export default class ApplyLeave extends Component {
       open: false,
       //  userReady: false,
       currentUser: {},
-      // sickLeave: "",
+      sickLeave: "",
       casualLeave: "",
-      earnedLeave: ""
+      earnedLeave: "",
+      link: ""
     }
     this.handleNewRequest = this.handleNewRequest.bind(this);
+    this.onChangeLink = this.onChangeLink.bind(this);
     // this.onChangeEmpId = this.onChangeEmpId.bind(this);
   }
 
@@ -74,7 +73,7 @@ export default class ApplyLeave extends Component {
       this.setState({
         empId: currentUser.id,
         designation: currentUser.designation,
-        // sickLeave: currentUser.sickLeave,
+        sickLeave: currentUser.sickLeave,
         earnedLeave: currentUser.earnedLeave,
         casualLeave: currentUser.casualLeave
       })
@@ -83,6 +82,13 @@ export default class ApplyLeave extends Component {
     }
 
   }
+
+  onChangeLink(op) {
+    this.setState({
+      link: op.target.value
+    });
+  }
+
   handleLeaveTypeChange = (op) => {
     this.setState({
       leaveType: op
@@ -119,6 +125,7 @@ export default class ApplyLeave extends Component {
     // let end=this.state.endDate.getDate() + '-' + (this.state.endDate.getMonth() + 1) + '-' + this.state.endDate.getFullYear();
     console.log("leaveType", this.state.leaveType.value)
     console.log("Date", today)
+    console.log("attatchment", this.state.link)
     let leaveRequest = {
       empId: this.state.empId,
       designation: this.state.designation,
@@ -126,6 +133,7 @@ export default class ApplyLeave extends Component {
       requestDate: today,
       startDate: start,
       endDate: end,
+      attachment: this.state.link,
     }
     console.log("new request", leaveRequest)
     this.setState({
@@ -169,7 +177,7 @@ export default class ApplyLeave extends Component {
             <Collapsible style={{ backgroundColor: '#f1f1f1' }} trigger="My Leave Balance">
               <p></p>
               <p className="content">Casual Leave: {this.state.casualLeave} </p>
-              {/* <p className="content">Sick Leave: {this.state.sickLeave}</p> */}
+              <p className="content">Sick Leave: {this.state.sickLeave}</p>
               {
                 this.state.designation != "M.Tech. Scholar" && this.state.designation != "Ph.D. Scholar" ?
                   <p className="content">Earned Leave: {this.state.earnedLeave}</p>
@@ -225,17 +233,35 @@ export default class ApplyLeave extends Component {
                     onChange={this.handleEndDateChange}
                   />
                 </div>
-                <div className="container" style={{ width: "600px" }}>
-                  <UploadFiles />
-                </div>
 
+                {this.state.leaveType.value === "Sick Leave" &&
+
+                  <div className="form-group">
+                    <label class="input-white" > Add Link  &nbsp;
+                      <img
+                        src={require('.././images/link.png')}
+                        alt="no data found"
+                        height="15"
+                        width="15"
+                      />
+                    </label>
+
+                    <Input
+                      type="text"
+                      className="form-control"
+                      name="link"
+                      value={this.state.link}
+                      onChange={this.onChangeLink}
+                    />
+                  </div>
+
+                }
 
 
                 {/* <div className="container">
                   <Button className="btn" onClick={!this.state.open}>
                     Collapse Div
                   </Button>
-
                   <Collapse in={this.state.open}>
                     <div>
                       <p>Content when the button is clicked</p>

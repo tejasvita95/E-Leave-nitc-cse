@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import Input from "react-validation/build/input";
 import authService from '../services/auth.service';
 import userService from '../services/user.service';
 import { Redirect } from "react-router-dom";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+
 
 
 class ViewAllRequest extends Component {
@@ -16,12 +20,20 @@ class ViewAllRequest extends Component {
             redirect: null,
             isScholarPresent: false,
             isStaffPresent: false,
-            isHod: false
+            isHod: false,
+            reason: ""
         }
         this.approveRequestHandler = this.approveRequestHandler.bind(this);
         this.declineRequestHandler = this.declineRequestHandler.bind(this);
+        this.onChangeReason = this.onChangeReason.bind(this);
 
     }
+    onChangeReason(op) {
+        this.setState({
+            reason: op.target.value
+        });
+    }
+
 
     viewRequestByEmplyoeeId(id) {
         this.props.history.push(`/view-request/${id}`);
@@ -56,7 +68,7 @@ class ViewAllRequest extends Component {
             });
             // userService.getAllEmployee(Role).then((res) => {
             //     this.setState({ employees: res.data });
-           
+
             // });
 
         }
@@ -92,6 +104,7 @@ class ViewAllRequest extends Component {
         let currRequest = this.state.requests.filter(res => res.id == requestId)
         currRequest[0].finalStatus = "Declined";
         currRequest[0].currentStatus = "Declined";
+        currRequest[0].reason = this.state.reason;
         console.log(currRequest);
         userService.changeRequestStatus(requestId, currentUser.id, currRequest[0], currentUser.designation).then(res => {
             this.setState({ requests: res.data });
@@ -146,9 +159,22 @@ class ViewAllRequest extends Component {
                                                     <tr key={req.id}>
                                                         <td><u><a style={{ color: "#3FF" }} href="" onClick={() => this.viewRequestByEmplyoeeId(req.empId)} >{req.username}</a></u></td>
                                                         <td> {req.empName}</td>
-                                                        <td>{req.designation}</td>
+                                                        <td>{req.designation=="Professor"?"Faculty":req.designation}</td>
                                                         <td>{req.requestDate}</td>
-                                                        <td width="120px">{req.leaveType}</td>
+                                                        <td width="125px">{req.leaveType} &nbsp;
+                                                            {
+                                                                req.leaveType == "Sick Leave" &&
+                                                                <a href={req.attachment} target="_blank" className="tooltip-test" data-toggle="tooltip"
+                                                                    title="Click to view health certificates ">
+                                                                    <img
+                                                                        src={require('.././images/link.png')}
+                                                                        alt="no data found"
+                                                                        height="15"
+                                                                        width="15"
+                                                                    /></a>
+                                                            }
+
+                                                        </td>
                                                         <td width="120px">{req.startDate}</td>
                                                         <td width="120px">{req.endDate}</td>
                                                         {req.finalStatus == "Approved" ?
@@ -160,8 +186,15 @@ class ViewAllRequest extends Component {
                                                         <td width="200px">
                                                             <button disabled={req.finalStatus == "Approved" || req.finalStatus == "Declined"} style={{ marginLeft: "5px", marginTop: "5px" }}
                                                                 onClick={() => this.approveRequestHandler(req.id)} className="btn btn-info"> Approve </button>
-                                                            <button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
-                                                                onClick={() => this.declineRequestHandler(req.id)} className="btn btn-danger"> Decline </button>
+                                                            <Popup backg trigger={<button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
+                                                                className="btn btn-danger"> Decline </button>} position="right center">
+                                                                <div>
+                                                                    <textarea rows="5" cols="23" placeholder="specify reason" onChange={this.onChangeReason}></textarea>
+                                                                    <button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
+                                                                onClick={() => this.declineRequestHandler(req.id)} className="btn btn-danger"> Done </button>
+                                                                </div>
+                                                            </Popup>
+
                                                         </td>
                                                     </tr> : <span></span>
 
@@ -190,7 +223,7 @@ class ViewAllRequest extends Component {
                             <TabPanel>
 
 
-                                {this.state.isStaffPresent ==true ?
+                                {this.state.isStaffPresent == true ?
 
                                     <table className="table table-striped table-bordered" style={{ color: 'white' }}>
                                         <thead>
@@ -215,9 +248,23 @@ class ViewAllRequest extends Component {
                                                         <tr key={req.id}>
                                                             <td><u><a style={{ color: '#3FF' }} href="" onClick={() => this.viewRequestByEmplyoeeId(req.empId)}>{req.username}</a></u></td>
                                                             <td> {req.empName}</td>
-                                                            <td>{req.designation}</td>
+                                                            <td>{req.designation=="Professor"?"Faculty":req.designation}</td>
                                                             <td>{req.requestDate}</td>
-                                                            <td width="120px">{req.leaveType}</td>
+                                                            <td width="120px">{req.leaveType}
+                                                                &nbsp;
+                                                                {
+                                                                    req.leaveType == "Sick Leave" &&
+                                                                    <a href={req.attachment} target="_blank" className="tooltip-test" data-toggle="tooltip"
+                                                                        title="Click to view health certificates ">
+                                                                        <img
+                                                                            src={require('.././images/link.png')}
+                                                                            alt="no data found"
+                                                                            height="15"
+                                                                            width="15"
+                                                                        /></a>
+                                                                }
+
+                                                            </td>
                                                             <td width="120px">{req.startDate}</td>
                                                             <td width="120px">{req.endDate}</td>
                                                             {req.finalStatus == "Approved" ?
@@ -229,8 +276,15 @@ class ViewAllRequest extends Component {
                                                             <td width="200px">
                                                                 <button disabled={req.finalStatus == "Approved" || req.finalStatus == "Declined"} style={{ marginLeft: "5px", marginTop: "5px" }}
                                                                     onClick={() => this.approveRequestHandler(req.id)} className="btn btn-info"> Approve </button>
-                                                                <button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
-                                                                    onClick={() => this.declineRequestHandler(req.id)} className="btn btn-danger"> Decline </button>
+                                                            <Popup backg trigger={<button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
+                                                                className="btn btn-danger"> Decline </button>} position="right center">
+                                                                <div>
+                                                                    <textarea rows="5" cols="23" placeholder="specify reason" onChange={this.onChangeReason}></textarea>
+                                                                    <button disabled={req.finalStatus == "Declined" || req.finalStatus == "Approved"} style={{ marginLeft: "5px", marginTop: "5px" }}
+                                                                onClick={() => this.declineRequestHandler(req.id)} className="btn btn-danger"> Done </button>
+                                                                </div>
+                                                            </Popup>
+
                                                             </td>
                                                         </tr> : <span></span>
 

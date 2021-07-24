@@ -33,10 +33,12 @@ public class FileController {
   private FileStorageService storageService;
 
   @PostMapping("/upload")
-  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("reqId") int reqId ) {
     String message = "";
+    
+    System.out.println("sending "+file.getName()+" "+reqId);
     try {
-      storageService.store(file);
+      storageService.store(file, reqId);
 
       message = "Uploaded the file successfully: " + file.getOriginalFilename();
       return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
@@ -52,7 +54,7 @@ public class FileController {
       String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
           .path("/api/auth/files/")
-          .path(dbFile.getId())
+          .path(dbFile.getReqId()+"")
           .toUriString();
 
       return new ResponseFile(
@@ -65,10 +67,11 @@ public class FileController {
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
 
-  @GetMapping("/files/{id}")
-  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-    FileDB fileDB = storageService.getFile(id);
+  @GetMapping("/files/{reqId}")
+  public ResponseEntity<byte[]> getFile(@PathVariable int reqId) {
+    FileDB fileDB = storageService.getFile(reqId);
 
+    
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
         .body(fileDB.getData());

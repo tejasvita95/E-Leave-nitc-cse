@@ -2,13 +2,13 @@ import authHeader from "./auth-header";
 import http from "./http-common";
 
 class UploadFilesService {
-  upload(file, onUploadProgress) {
+  upload(file, id, onUploadProgress) {
     let formData = new FormData();
     let aH= authHeader();
 
     formData.append("file", file);
 
-    return http.post("/upload", formData, {
+    return http.post("/upload", formData, id, {
       headers: {
         "Content-Type": "multipart/form-data",
         aH,
@@ -21,8 +21,8 @@ class UploadFilesService {
     return http.get("/files");
   }
 
-  viewFiles(url){
-    return  http.get(url, { headers: authHeader() })
+  viewFiles(reqId){
+    return  http.get("http://localhost:8080/api/auth/files/"+reqId, { headers: authHeader() })
   }
 
 }

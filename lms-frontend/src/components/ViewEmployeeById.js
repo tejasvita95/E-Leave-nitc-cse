@@ -54,13 +54,14 @@ export default class ViewEmployeeById extends Component {
 
                             <tr>
                                 <td>  Designation </td>
-                                <td> {this.state.employee.designation}</td>
+                                <td>{this.state.employee.designation=="Professor"?"Faculty":this.state.employee.designation}</td>
+                                {/* <td> {this.state.employee.designation}</td> */}
                             </tr>
 
-                            {/* <tr>
+                            <tr>
                                 <td>  Remaining Sick Leave </td>
                                 <td> {this.state.employee.sickLeave}</td>
-                            </tr> */}
+                            </tr>
 
                             <tr>
                                 <td>  Remaining Casual Leave </td>

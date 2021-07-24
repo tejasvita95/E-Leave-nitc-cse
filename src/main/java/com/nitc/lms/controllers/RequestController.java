@@ -318,7 +318,7 @@ public class RequestController {
 		mailMessage.setFrom("cse.nitc.2021@gmail.com");
 		mailMessage.setSubject("Leave request final status");
 
-		mailMessage.setText("Hi"+u.getFirstName()+" "+u.getLastName()+",\n your leave request has been" +status+".");
+		mailMessage.setText("Hi "+u.getFirstName()+" "+u.getLastName()+",\n your leave request has been " +status+".");
 
 		System.out.println(mailMessage);
 		emailService.sendEmail(mailMessage);
@@ -400,6 +400,13 @@ public class RequestController {
 			
 			}
 			
+			if(request.getLeaveType().equals("Sick Leave") && request.getAttachment().trim().equals(""))
+			{
+				return ResponseEntity.badRequest().body(new MessageResponse("Invalid Link!!!"));		
+			}
+			
+			
+			
 			Request res = this.requestRepository.save(request);
 //		
 //			if (request.getLeaveType().equals("Casual Leave"))
@@ -417,7 +424,7 @@ public class RequestController {
 //				user.setEarnedLeave(user.getEarnedLeave() - vacationDays);
 //			}
 
-//			System.out.println(request);
+			System.out.println(request);
 //			System.out.println(request.getDesignation());
 //			System.out.println(request.getDesignation().equals("M.Tech. Program Coordinator"));
 					

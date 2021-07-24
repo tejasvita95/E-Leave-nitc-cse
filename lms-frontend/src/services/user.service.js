@@ -45,6 +45,8 @@ class UserService {
   }
 
   applyLeave(leaveRequest){
+
+    
     return axios.post(API_URL+ 'user/add-leave',leaveRequest);
   }
   

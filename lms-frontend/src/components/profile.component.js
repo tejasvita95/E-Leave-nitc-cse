@@ -75,10 +75,10 @@ export default class Profile extends Component {
                     }
                     <td>{currentUser.collegeId}</td> */}
                     <th>Designation:</th>
-                    <td>{currentUser.designation}</td>
+                    <td>{currentUser.designation=="Professor"?"Faculty":currentUser.designation}</td>
 
                   </tr>
-
+                  
                   <tr>
                     <th>Name:</th>
                     <td>{currentUser.firstName + " " + currentUser.lastName}</td>
@@ -95,7 +95,7 @@ export default class Profile extends Component {
                   {
                     currentUser.designation == "Ph.D. Scholar" ?
                       <tr>
-                        <th>Guide Name:</th>
+                        <th>Guide:</th>
                         <td>{currentUser.guideName}</td>
                         <th></th>
                         <td></td>
@@ -118,14 +118,14 @@ export default class Profile extends Component {
             {
               currentUser.designation !== "HOD" && currentUser.designation !== "Admin" ?
                 <div>
-                  {/* <div style={{ width: 150, height: 150, float: 'left', margin: '40px' }}>
+                  <div style={{ width: 150, height: 150, float: 'left', margin: '40px' }}>
                     <CircularProgressbar value={currentUser.sickLeave} maxValue={14} strokeWidth={5} text={currentUser.sickLeave + "/14"} />
                     <br></br>
                     <center><p style={{ fontSize: 22 }}><b>Sick Leave </b></p></center>
-                  </div> */}
+                  </div>
 
                   <div style={{ width: 150, height: 150, float: 'left', margin: '40px' }}>
-                    <CircularProgressbar value={currentUser.casualLeave} strokeWidth={5} maxValue={7} text={currentUser.casualLeave + "/7"} />
+                    <CircularProgressbar value={currentUser.casualLeave} strokeWidth={5} maxValue={8} text={currentUser.casualLeave + "/8"} />
                     <b><center><p style={{ fontSize: 22 }}>Casual Leave </p></center></b>
                   </div>
 

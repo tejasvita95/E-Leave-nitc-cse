@@ -39,6 +39,9 @@ public class Request {
 	private String currentStatus;
 	private String empName;
 	private String username;
+	private String reason;
+	private String attachment;
+	
 	
 	
 	public Request() {
@@ -47,7 +50,7 @@ public class Request {
 	}
 
 	public Request(int empId, String designation, String leaveType, String requestDate, String startDate,
-			String endDate, String empName, String username) {
+			String endDate, String empName, String username, String reason, String attachment) {
 		super();
 		this.empId = empId;
 		this.designation = designation;
@@ -59,6 +62,8 @@ public class Request {
 		this.currentStatus = "Waiting for Approval";
 		this.empName = empName;
 		this.username = username;
+		this.attachment = attachment;
+		this.reason = reason;
 	}
 
 	public int getId() {
@@ -137,7 +142,7 @@ public class Request {
 	public String toString() {
 		return "Request [id=" + id + ", empId=" + empId + ", designation=" + designation + ", leaveType=" + leaveType
 				+ ", requestDate=" + requestDate + ", startDate=" + startDate + ", endDate=" + endDate
-				+ ", finalStatus=" + finalStatus + ", currentStatus=" + currentStatus +" username = "+username+  "]";
+				+ ", finalStatus=" + finalStatus + ", currentStatus=" + currentStatus +" username = "+username+ " attachment = "+attachment+" reason = "+reason+" ]";
 	}
 
 	public String getEmpName() {
@@ -154,6 +159,22 @@ public class Request {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getAttachment() {
+		return attachment;
+	}
+
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
 	}
 
 }

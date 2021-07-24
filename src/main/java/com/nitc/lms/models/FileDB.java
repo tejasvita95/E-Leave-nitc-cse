@@ -22,14 +22,17 @@ public class FileDB {
 
   @Lob
   private byte[] data;
-
+  
+  private int reqId;
+  
   public FileDB() {
   }
 
-  public FileDB(String name, String type, byte[] data) {
+  public FileDB(String name, String type, byte[] data, int reqId) {
     this.name = name;
     this.type = type;
     this.data = data;
+    this.reqId = reqId;
   }
 
   public String getId() {
@@ -59,5 +62,13 @@ public class FileDB {
   public void setData(byte[] data) {
     this.data = data;
   }
+
+public int getReqId() {
+	return reqId;
+}
+
+public void setReqId(int reqId) {
+	this.reqId = reqId;
+}
 
 }

@@ -18,15 +18,16 @@ public class FileStorageService {
   @Autowired
   private FileDBRepository fileDBRepository;
 
-  public FileDB store(MultipartFile file) throws IOException {
+  public FileDB store(MultipartFile file, int reqId) throws IOException {
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-    FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
+    FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes(), reqId);
 
     return fileDBRepository.save(FileDB);
   }
 
-  public FileDB getFile(String id) {
-    return fileDBRepository.findById(id).get();
+  public FileDB getFile(int reqId) {
+	  System.out.println(reqId);
+    return fileDBRepository.findByReqId(reqId).get(0);
   }
   
   public Stream<FileDB> getAllFiles() {

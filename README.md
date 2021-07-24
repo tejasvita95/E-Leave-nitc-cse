@@ -1,37 +1,31 @@
-# Spring Boot Leave Management System with Spring Security & Spring Data JPA
 
-## User Registration, User Login and Authorization process.
+# Leave Management System(LMS)
 
-## Spring Boot Server Architecture with Spring Security
+A web application used for managing the leave of the faculty/staff and Ph.D./M.Tech. scholars of NIT Calicut, built with React and Spring Boot.
 
-## Dependency
-MySQL:
-```xml
-<dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <scope>runtime</scope>
-</dependency>
-```
-## Configure Spring Datasource, JPA, App properties
-Open `src/main/resources/application.properties`
+# Installation and Setup Instructions
 
-For MySQL
-```
-spring.datasource.url= jdbc:mysql://localhost:3306/testdb?useSSL=false
-spring.datasource.username= root
-spring.datasource.password= 123456
+Download the source code of the project. You will need node and npm installed globally on your machine.
+    
+    Install Node JS: 
+    Refer to https://nodejs.org/en/ to install nodejs
 
-spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.MySQL5InnoDBDialect
-spring.jpa.hibernate.ddl-auto= update
-```
-## Run Spring Boot application
-```
-mvn spring-boot:run
-```
 
-## Run following SQL insert statements
-```
-INSERT INTO roles(name) VALUES('ROLE_USER');
-INSERT INTO roles(name) VALUES('ROLE_ADMIN');
-```
+# Downloading and Running the Application in local
+Download LMS.zip. 
+
+Extract the zip file and import the project folder  in the IDE of your choice (for this project the IDE used for backend is Spring Tool Suit. Link to download:).
+
+Import the database from LMS/sql.
+
+Run as Java Application to start the backend server.
+
+In order to run the frontend server, open the path LMS/lms-frontend in command prompt.
+
+Run the following command to install the dependencies
+
+    npm install 
+
+Run the following command to start the frontend server
+    
+    npm start
