@@ -23,6 +23,26 @@ const leaveOptions2 = [
   { value: "Sick Leave", label: "Sick Leave" }
 ];
 
+const verifyLink = value => {
+
+
+  let valid = false;
+
+  let regexEmail = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+
+  if (value.match(regexEmail)) {
+    valid = true;
+  }
+
+  if (!valid) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        This is not a valid URL.
+      </div>
+    );
+  }
+};
+
 export default class ApplyLeave extends Component {
 
   constructor(props) {
@@ -35,6 +55,7 @@ export default class ApplyLeave extends Component {
       endDate: new Date(),
       successful: false,
       message: "",
+      loading: false,
       redirect: null,
       open: false,
       //  userReady: false,
@@ -138,6 +159,7 @@ export default class ApplyLeave extends Component {
     console.log("new request", leaveRequest)
     this.setState({
       message: "",
+      loading: true,
       successful: false
     });
 
@@ -156,10 +178,16 @@ export default class ApplyLeave extends Component {
             error.message || error.toString();
           this.setState({
             successful: false,
-            message: resMessage
+            message: resMessage,
+            loading: false
           });
         }
       );
+    }
+    else {
+      this.setState({
+        loading: false
+      });
     }
   }
 
@@ -252,6 +280,7 @@ export default class ApplyLeave extends Component {
                       name="link"
                       value={this.state.link}
                       onChange={this.onChangeLink}
+                      validations={[verifyLink]}
                     />
                   </div>
 
@@ -274,7 +303,13 @@ export default class ApplyLeave extends Component {
                 {/* <Alert>(Oh snap! You got an error!)</Alert> */}
 
                 <div className="form-group">
-                  <button className="btn btn-primary btn-block">Submit </button>
+                  <button className="btn btn-primary btn-block" disabled={this.state.loading}>
+                  {this.state.loading && (
+                      <span className="spinner-border spinner-border-sm">
+
+                      </span>
+                    )}
+                    Submit </button>
                 </div>
               </div>
             )}

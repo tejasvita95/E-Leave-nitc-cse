@@ -12,19 +12,19 @@ import AuthService from "../services/auth.service";
 import userService from "../services/user.service";
 
 //options for marital status 
-const designationOptions=[
+const designationOptions = [
   //ROle-USER
-  {value :"M.Tech. Scholar", label:"M.Tech. Scholar"},
-  {value :"Ph.D. Scholar", label:"Ph.D. Scholar"},
-  {value :"Non Teaching Staff", label:"Non-Teaching Staff"},
+  { value: "M.Tech. Scholar", label: "M.Tech. Scholar" },
+  { value: "Ph.D. Scholar", label: "Ph.D. Scholar" },
+  { value: "Non Teaching Staff", label: "Non-Teaching Staff" },
   //ROLE- MOD
-  {value :"Faculty Advisor", label:"Faculty Advisor"},
-  {value :"M.Tech. Program Coordinator", label:"M.Tech. Program Coordinator"},
-  {value :"Ph.D. Program Coordinator", label:"Ph.D. Program Coordinator"},
-  {value :"Professor", label:"Faculty"}
+  { value: "Faculty Advisor", label: "Faculty Advisor" },
+  { value: "M.Tech. Program Coordinator", label: "M.Tech. Program Coordinator" },
+  { value: "Ph.D. Program Coordinator", label: "Ph.D. Program Coordinator" },
+  { value: "Professor", label: "Faculty" }
 ];
 
-const professorsList=[];
+const professorsList = [];
 
 const required = value => {
   if (!value) {
@@ -38,10 +38,10 @@ const required = value => {
 
 const email = value => {
 
-  let valid=false;
+  let valid = false;
   let regexEmail = /^\w+([\.-]?\w+)*@nitc.ac.in$/;
   if (value.match(regexEmail)) {
-    valid = true; 
+    valid = true;
   }
 
   if (!isEmail(value) || (!valid)) {
@@ -94,13 +94,13 @@ const vfirstName = value => {
 // };
 
 const vmobileNo = value => {
-  let valid=false;
+  let valid = false;
   let regexEmail = /^\d+$/;
   if (value.match(regexEmail)) {
-    valid = true; 
+    valid = true;
   }
 
-  if (value.length !=10 || (!valid)) {
+  if (value.length != 10 || (!valid)) {
     return (
       <div className="alert alert-danger" role="alert">
         The mobile number is invalid !
@@ -141,93 +141,95 @@ export default class Register extends Component {
       password: "",
       confirmPassword: "",
       firstName: "",
-	    lastName: "",
-	    joinDate: new Date(),
+      lastName: "",
+      joinDate: new Date(),
       email: "",
-	    mobileNo: "",
-	    designation:"",
-	    sickLeave:0,
-	    casualLeave:0,
-      earnedLeave:0,
+      mobileNo: "",
+      designation: "",
+      loading: false,
+      sickLeave: 0,
+      casualLeave: 0,
+      earnedLeave: 0,
       successful: false,
       message: "",
-      guide:"",
-      collegeId:"",
-            formErrors:{
-        confirmPassword:""
+      guide: "",
+      collegeId: "",
+      formErrors: {
+        confirmPassword: ""
       }
     };
   }
 
-  onChangeCollegeId(e){ this.setState({ collegeId: e.target.value});}
-  onChangeUsername(e){ this.setState({ username: e.target.value});}
-  onChangeEmail(e) { this.setState({ email: e.target.value});}
-  onChangePassword(e) { this.setState({ password: e.target.value});}
+  onChangeCollegeId(e) { this.setState({ collegeId: e.target.value }); }
+  onChangeUsername(e) { this.setState({ username: e.target.value }); }
+  onChangeEmail(e) { this.setState({ email: e.target.value }); }
+  onChangePassword(e) { this.setState({ password: e.target.value }); }
   onChangeconfirmPassword(e) { this.setState({ confirmPassword: e.target.value }); }
-  onChangeFirstName(e) { this.setState({ firstName: e.target.value});}
-  onChangeLastName(e) { this.setState({ lastName: e.target.value});}
+  onChangeFirstName(e) { this.setState({ firstName: e.target.value }); }
+  onChangeLastName(e) { this.setState({ lastName: e.target.value }); }
   //handleDateChange(e) { this.setState({ joinDate: e.target.value});}
-  onChangeMobileNo(e) { this.setState({ mobileNo: e.target.value});}
+  onChangeMobileNo(e) { this.setState({ mobileNo: e.target.value }); }
   //handleDesignationChange(e) { this.setState({ designation: e.target.value});}
 
-  
 
 
-  handleDesignationChange=(op)=>{
+
+  handleDesignationChange = (op) => {
     userService.getProfessors().then(res => {
-      professorsList.length=0;
-      for(let i=0;i<res.data.length;i++){
+      professorsList.length = 0;
+      for (let i = 0; i < res.data.length; i++) {
         professorsList.push({
-          value:res.data[i],
-          label:res.data[i]
+          value: res.data[i],
+          label: res.data[i]
         })
       }
-     });
+    });
 
-     op.value==="Ph.D. Scholar" ? 
-     this.setState({designation: op}) :
-     this.setState({
-       designation: op,
-       guide:professorsList
-      }) 
-   // console.log("set designation",this.state.designation)
+    op.value === "Ph.D. Scholar" ?
+      this.setState({ designation: op }) :
+      this.setState({
+        designation: op,
+        guide: professorsList
+      })
+    // console.log("set designation",this.state.designation)
   }
-  handleGuideChange=(op)=>{
+  handleGuideChange = (op) => {
     this.setState({
-        guide: op
+      guide: op
     })
   }
 
-  handleDateChange=(date)=>{
+  handleDateChange = (date) => {
     this.setState({
-        joinDate:date
+      joinDate: date
     })
     //console.log("DOB",this.state.joinDate)
-}
+  }
 
   handleRegister(e) {
     e.preventDefault();
 
     this.setState({
       message: "",
+      loading: true,
       successful: false
     });
     this.form.validateAll();
-   
-    var joiningDate=this.state.joinDate.getDate() + '-' + (this.state.joinDate.getMonth() + 1) + '-' + this.state.joinDate.getFullYear();
-     let user= {
-      username :this.state.username,
-      password :this.state.password,
-      firstName :this.state.firstName,
-      lastName:this.state.lastName,
-      joinDate:joiningDate,
-      email:this.state.email,
-      mobileNo:this.state.mobileNo,
-      designation:this.state.designation.value,
-      guide:this.state.guide.value,
+
+    var joiningDate = this.state.joinDate.getDate() + '-' + (this.state.joinDate.getMonth() + 1) + '-' + this.state.joinDate.getFullYear();
+    let user = {
+      username: this.state.username,
+      password: this.state.password,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      joinDate: joiningDate,
+      email: this.state.email,
+      mobileNo: this.state.mobileNo,
+      designation: this.state.designation.value,
+      guide: this.state.guide.value,
       collegeId: this.state.collegeId
-     }
-     console.log("User",user);
+    }
+    console.log("User", user);
     if (this.checkBtn.context._errors.length === 0) {
       AuthService.register(user).then(
         response => {
@@ -246,18 +248,24 @@ export default class Register extends Component {
 
           this.setState({
             successful: false,
-            message: resMessage
+            message: resMessage,
+            loading: false
           });
         }
       );
     }
+    else {
+      this.setState({
+        loading: false
+      });
+    }
   }
 
-  matchPassword(){
+  matchPassword() {
     let errors = {};
-    let isValid=true;
-    if(this.state.password != this.state.confirmPassword){
-      isValid=false;
+    let isValid = true;
+    if (this.state.password != this.state.confirmPassword) {
+      isValid = false;
       errors["confirmPassword"] = "Passwords don't match";
     }
     this.setState({
@@ -268,7 +276,7 @@ export default class Register extends Component {
 
 
   render() {
-    console.log("desi",this.state.designation);
+    console.log("desi", this.state.designation);
     return (
       <div className="col-md-12">
         <div className="card container col-md-6">
@@ -283,12 +291,12 @@ export default class Register extends Component {
             ref={c => {
               this.form = c;
             }}
-           >
+          >
             {!this.state.successful && (
               <div>
                 <div className="form-row">
-                
-                {/* <div className="form-group col-md-6">
+
+                  {/* <div className="form-group col-md-6">
                     <label class="input-white" htmlFor="collegeId">College Id</label>
                     <Input
                       type="text"
@@ -311,20 +319,20 @@ export default class Register extends Component {
                       validations={[required, vusername]}
                     />
                   </div>
-                  
-                  <div className="form-group col-md-6">
-                  <label class="input-white" htmlFor="password">Password</label>
-                  <Input
-                    type="password"
-                    className="form-control"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.onChangePassword}
-                    validations={[required, vpassword]}
-                  />
-                 </div>
 
-                 {/* <div className="form-group col-md-6">
+                  <div className="form-group col-md-6">
+                    <label class="input-white" htmlFor="password">Password</label>
+                    <Input
+                      type="password"
+                      className="form-control"
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.onChangePassword}
+                      validations={[required, vpassword]}
+                    />
+                  </div>
+
+                  {/* <div className="form-group col-md-6">
                  <label htmlFor="password">Confirm Password</label>
                     <Input
                       type="password"
@@ -338,11 +346,11 @@ export default class Register extends Component {
                   </div>
  */}
 
-                  
-              </div>
-              <div className="form-row">
 
-              <div className="form-group col-md-6">
+                </div>
+                <div className="form-row">
+
+                  <div className="form-group col-md-6">
                     <label class="input-white" htmlFor="email">Email</label>
                     <Input
                       type="text"
@@ -354,21 +362,21 @@ export default class Register extends Component {
                     />
                   </div>
 
-                <div className="form-group col-md-6">
-                  <label class="input-white" htmlFor="joinDate">Join Date</label>
-                            <DatePicker
-                                name="joinDate"
-                                selected={ this.state.joinDate}
-                                dateFormat='dd-MM-yyyy'
-                                maxDate={new Date()}
-                                showYearDropdown
-                                scrollableYearDropdown="true"
-                                onChange={this.handleDateChange} 
-                              />
-                    </div>
+                  <div className="form-group col-md-6">
+                    <label class="input-white" htmlFor="joinDate">Join Date</label>
+                    <DatePicker
+                      name="joinDate"
+                      selected={this.state.joinDate}
+                      dateFormat='dd-MM-yyyy'
+                      maxDate={new Date()}
+                      showYearDropdown
+                      scrollableYearDropdown="true"
+                      onChange={this.handleDateChange}
+                    />
+                  </div>
                 </div>
-                
-              <div className="form-group">
+
+                <div className="form-group">
                   <label class="input-white" htmlFor="firstName">First Name</label>
                   <Input
                     type="text"
@@ -403,43 +411,51 @@ export default class Register extends Component {
                 </div>
 
                 <div className="form-group">
-                     <label class="input-white">Designation </label>
-                        <Select  name="designation"
-                                  value={this.state.designation}
-                                  onChange={this.handleDesignationChange}
-                                  options={designationOptions} 
-                                  validations={[required, vDesignation]}
+                  <label class="input-white">Designation </label>
+                  <Select name="designation"
+                    value={this.state.designation}
+                    onChange={this.handleDesignationChange}
+                    options={designationOptions}
+                    validations={[required, vDesignation]}
 
-                        />
+                  />
                 </div>
 
                 {
-                this.state.designation.value == "Ph.D. Scholar" ? 
-                <div className="form-group">
-                     <label class="input-white">Guide </label>
-                        <Select  name="guide"  
-                                 value={this.state.guide}
-                                 onChange={this.handleGuideChange}
-                                 options={professorsList}
-                        />
-                </div> :
-                <div></div>
+                  this.state.designation.value == "Ph.D. Scholar" ?
+                    <div className="form-group">
+                      <label class="input-white">Guide </label>
+                      <Select name="guide"
+                        value={this.state.guide}
+                        onChange={this.handleGuideChange}
+                        options={professorsList}
+                      />
+                    </div> :
+                    <div></div>
                 }
-              
+
 
                 <div className="form-group">
-                  <button className="btn btn-primary btn-block">Sign Up</button>
+
+                  <button className="btn btn-primary btn-block" disabled={this.state.loading}>
+                    {this.state.loading && (
+                      <span className="spinner-border spinner-border-sm">
+
+                      </span>
+                    )}
+                    Sign Up</button>
+
                 </div>
               </div>
             )}
 
             {this.state.message && (
               <div className="form-group">
-                <div className={ this.state.successful
-                                 ? "alert alert-success"
-                                : "alert alert-danger"}
+                <div className={this.state.successful
+                  ? "alert alert-success"
+                  : "alert alert-danger"}
                   role="alert">
-                   {this.state.message}
+                  {this.state.message}
                 </div>
               </div>
             )}
